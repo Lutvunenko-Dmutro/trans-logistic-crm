@@ -1,4 +1,4 @@
-# 🚛 TransLogistic CRM v4.0 (Dark Mode Edition)
+# 🚛 ransLogistic CRM v4.0 (Dark Mode Edition)
 
 **TransLogistic CRM** — це сучасна система управління взаємовідносинами з клієнтами (CRM), розроблена спеціально для логістичних та транспортних компаній. 
 
@@ -103,6 +103,7 @@ $dbname = "transport_db"; // Має співпадати з ім'ям у Кро�
 -----
 
 *Developed for educational purposes as part of Practical Work regarding PHP & MySQL integration.*
+
 
 
 
