@@ -1,6 +1,5 @@
 <?php
 session_start();
-// Вмикаємо показ помилок PHP для налагодження (можна прибрати на продакшені)
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -90,8 +89,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $action === 'create') {
     
     $errors = [];
     if (mb_strlen($data['name']) < 3) $errors['client_name'] = "Ім'я закоротке";
-    // Тимчасово вимкнемо сувору валідацію телефону, якщо вона блокує
-    // if (($res = validate_phone($data['phone'])) !== true) $errors['phone'] = $res;
     
     if (!empty($errors)) {
         $_SESSION['errors'] = $errors;
@@ -99,7 +96,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $action === 'create') {
         $_SESSION['msg'] = ['text' => implode('. ', $errors), 'type' => 'danger'];
     } else {
         $stmt = $conn->prepare("INSERT INTO orders (client_name, email, phone, service_type, details, status) VALUES (?, ?, ?, ?, ?, 'new')");
-        // Перевірка, чи підготувався запит
         if ($stmt === false) {
             $_SESSION['msg'] = ['text' => 'Помилка SQL Prepare: ' . $conn->error, 'type' => 'danger'];
         } else {
@@ -109,7 +105,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $action === 'create') {
                 $_SESSION['msg'] = ['text' => 'Заявку успішно створено!', 'type' => 'success'];
                 unset($_SESSION['old']);
             } else {
-                // ОСЬ ТУТ МИ ПОБАЧИМО РЕАЛЬНУ ПОМИЛКУ
                 $_SESSION['msg'] = ['text' => 'Помилка збереження: ' . $stmt->error, 'type' => 'danger'];
                 $_SESSION['old'] = $data;
             }
@@ -118,6 +113,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $action === 'create') {
     header("Location: index.php"); exit;
 }
 
-// Якщо нічого не спрацювало
 header("Location: index.php");
+
 ?>
