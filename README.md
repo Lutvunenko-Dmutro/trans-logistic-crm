@@ -74,22 +74,23 @@
 
 ```text
 trans-logistic-crm/
-├── screenshots/          # Папка зі скріншотами для README
+├── screenshots/          # Папка зі скріншотами для документації
 │   ├── login-page.png
 │   └── dashboard.png
 │
-├── db.php                # Підключення до бази даних (MySQLi)
-├── functions.php         # Допоміжні функції (очищення даних, валідація)
-├── process.php           # Контролер: обробка форм (Login, CRUD, Export)
+├── api.php               # [New] API-ендпоінт: повертає дані у форматі JSON (Завдання 4.2)
+├── db.php                # Конфігурація підключення до MySQL (mysqli)
+├── functions.php         # Допоміжні функції: clean() для XSS-захисту, валідація
+├── process.php           # Контролер: обробка POST-запитів (Login, Logout, CRUD, Export)
 │
-├── index.php             # Головна сторінка (Dashboard) - доступна після входу
-├── login.php             # Сторінка авторизації (Split Screen Design)
+├── index.php             # Головна сторінка (Dashboard). Реалізовано HTTP-кешування (Завдання 5.2)
+├── login.php             # Сторінка входу. Реалізовано Lazy Loading та HTTPS (Завдання 5.3)
 │
-├── style.css             # Основні стилі (Dark Mode, Glassmorphism, Custom UI)
-├── script.js             # JavaScript: ініціалізація графіків, перемикач тем, UI
-├── login-bg.jpg          # Фонове зображення для сторінки входу
+├── style.css             # Стилізація (Dark Mode, адаптивність)
+├── script.js             # JS: логіка графіків (Chart.js), перемикання теми, AJAX
+├── login-bg.jpg          # Фонове зображення (оптимізоване)
 │
-├── database.sql          # SQL-дамп для імпорту структури БД та демо-даних
+├── database.sql          # SQL-дамп: структура таблиць `users`, `orders` та демо-дані
 └── README.md             # Документація проекту
 ```
 ## 👨‍💻 Автор
@@ -101,3 +102,4 @@ trans-logistic-crm/
 
 ---
 *Project created for Educational Purposes (Practical Work #6)*
+
