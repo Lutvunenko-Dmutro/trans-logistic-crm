@@ -1,8 +1,5 @@
 <?php
 session_start();
-
-// --- ВИМОГА: КЕШУВАННЯ (Завдання 5.2) ---
-// Додаємо заголовки для кешування сторінки браузером на 1 годину
 $last_modified = filemtime(__FILE__);
 $etag = md5_file(__FILE__);
 
@@ -20,7 +17,6 @@ if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $last_modified ||
 require_once 'db.php';
 require_once 'functions.php';
 
-// --- ВИМОГА: HTTPS (Завдання 5.1) ---
 // Якщо сайт не на локальному сервері, змушуємо використовувати HTTPS
 if ($_SERVER['HTTP_HOST'] !== 'localhost' && $_SERVER['HTTP_HOST'] !== '127.0.0.1') {
     if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === "off") {
@@ -34,10 +30,10 @@ if ($_SERVER['HTTP_HOST'] !== 'localhost' && $_SERVER['HTTP_HOST'] !== '127.0.0.
 // Перевірка авторизації
 if (!isset($_SESSION['user_id'])) { header("Location: login.php"); exit; }
 
-// Генерація CSRF токена (Завдання 5.1)
+// Генерація CSRF токена 
 if (empty($_SESSION['csrf_token'])) $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
-// --- ОТРИМАННЯ ДАНИХ (Завдання 4.1) ---
+// --- ОТРИМАННЯ ДАНИХ ---
 $stats = $conn->query("SELECT COUNT(*) as total, SUM(status='new') as new FROM orders")->fetch_assoc();
 
 // Дані для графіка
@@ -45,7 +41,7 @@ $chartData = $conn->query("SELECT service_type, COUNT(*) as c FROM orders GROUP 
 $labels = []; $counts = [];
 while ($r = $chartData->fetch_assoc()) { $labels[] = $r['service_type']; $counts[] = $r['c']; }
 
-// Пошук та фільтрація (Завдання 4.3 - захист від SQL Injection)
+// Пошук та фільтрація (захист від SQL Injection)
 $search = clean($_GET['search'] ?? '');
 $sql = "SELECT * FROM orders WHERE client_name LIKE ? OR phone LIKE ? ORDER BY created_at DESC";
 $stmt = $conn->prepare($sql);
@@ -340,3 +336,4 @@ $orders = $stmt->get_result();
 <script src="script.js"></script>
 </body>
 </html>
+
