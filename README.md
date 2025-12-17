@@ -78,7 +78,7 @@ trans-logistic-crm/
 │   ├── login-page.png
 │   └── dashboard.png
 │
-├── api.php               # [New] API-ендпоінт: повертає дані у форматі JSON (Завдання 4.2)
+├── api.php               # API-ендпоінт: повертає дані у форматі JSON (Завдання 4.2)
 ├── db.php                # Конфігурація підключення до MySQL (mysqli)
 ├── functions.php         # Допоміжні функції: clean() для XSS-захисту, валідація
 ├── process.php           # Контролер: обробка POST-запитів (Login, Logout, CRUD, Export)
@@ -102,4 +102,5 @@ trans-logistic-crm/
 
 ---
 *Project created for Educational Purposes (Practical Work #6)*
+
 
