@@ -1,9 +1,26 @@
-
 <?php
 session_start();
+
+// --- ВИМОГА: КЕШУВАННЯ (Завдання 5.2) ---
+// Додаємо заголовки для кешування сторінки браузером на 1 годину
+$last_modified = filemtime(__FILE__);
+$etag = md5_file(__FILE__);
+
+header("Last-Modified: ".gmdate("D, d M Y H:i:s", $last_modified)." GMT");
+header("Etag: $etag");
+header("Cache-Control: public, max-age=3600");
+
+// Перевірка, чи є у браузера свіжа версія кешу (повертаємо 304 Not Modified)
+if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $last_modified || 
+    @trim($_SERVER['HTTP_IF_NONE_MATCH']) == $etag) {
+    header("HTTP/1.1 304 Not Modified");
+    exit;
+}
+
 require_once 'db.php';
 require_once 'functions.php';
-// --- ВИМОГА: HTTPS ---
+
+// --- ВИМОГА: HTTPS (Завдання 5.1) ---
 // Якщо сайт не на локальному сервері, змушуємо використовувати HTTPS
 if ($_SERVER['HTTP_HOST'] !== 'localhost' && $_SERVER['HTTP_HOST'] !== '127.0.0.1') {
     if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === "off") {
@@ -13,16 +30,22 @@ if ($_SERVER['HTTP_HOST'] !== 'localhost' && $_SERVER['HTTP_HOST'] !== '127.0.0.
         exit;
     }
 }
+
 // Перевірка авторизації
 if (!isset($_SESSION['user_id'])) { header("Location: login.php"); exit; }
+
+// Генерація CSRF токена (Завдання 5.1)
 if (empty($_SESSION['csrf_token'])) $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
-// --- ОТРИМАННЯ ДАНИХ ---
+// --- ОТРИМАННЯ ДАНИХ (Завдання 4.1) ---
 $stats = $conn->query("SELECT COUNT(*) as total, SUM(status='new') as new FROM orders")->fetch_assoc();
+
+// Дані для графіка
 $chartData = $conn->query("SELECT service_type, COUNT(*) as c FROM orders GROUP BY service_type");
 $labels = []; $counts = [];
 while ($r = $chartData->fetch_assoc()) { $labels[] = $r['service_type']; $counts[] = $r['c']; }
 
+// Пошук та фільтрація (Завдання 4.3 - захист від SQL Injection)
 $search = clean($_GET['search'] ?? '');
 $sql = "SELECT * FROM orders WHERE client_name LIKE ? OR phone LIKE ? ORDER BY created_at DESC";
 $stmt = $conn->prepare($sql);
