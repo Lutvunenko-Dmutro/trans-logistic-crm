@@ -2,7 +2,8 @@
 session_start();
 require_once 'db.php';
 require_once 'functions.php';
-// --- ВИМОГА: HTTPS ---
+
+// --- ВИМОГА: HTTPS (Завдання 5.1) ---
 // Якщо сайт не на локальному сервері, змушуємо використовувати HTTPS
 if ($_SERVER['HTTP_HOST'] !== 'localhost' && $_SERVER['HTTP_HOST'] !== '127.0.0.1') {
     if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === "off") {
@@ -12,7 +13,8 @@ if ($_SERVER['HTTP_HOST'] !== 'localhost' && $_SERVER['HTTP_HOST'] !== '127.0.0.
         exit;
     }
 }
-// Генерація CSRF токена
+
+// Генерація CSRF токена (Завдання 5.1)
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
@@ -27,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $username = clean($_POST['username']);
         $password = $_POST['password'];
 
-        // Запит до БД
+        // Запит до БД (Завдання 4.3 - Prepared Statements)
         $stmt = $conn->prepare("SELECT id, password FROM users WHERE username = ?");
         $stmt->bind_param("s", $username);
         $stmt->execute();
@@ -69,14 +71,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         /* ЛІВА ЧАСТИНА (ФОРМА) */
         .left-panel {
-            background-color: #1e2029; /* Темний колір, як на скріншоті */
+            background-color: #1e2029;
             display: flex;
             flex-direction: column;
             justify-content: center;
             padding: 3rem;
             position: relative;
             z-index: 2;
-            box-shadow: 10px 0 30px rgba(0,0,0,0.3); /* Тінь праворуч */
+            box-shadow: 10px 0 30px rgba(0,0,0,0.3);
         }
 
         .login-card-minimal {
@@ -91,7 +93,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             margin-bottom: 1rem;
         }
 
-        /* Стилізація полів вводу під скріншот (темні, з рамкою) */
+        /* Стилізація полів вводу */
         .form-control {
             background-color: #2b2d36;
             border: 1px solid #3f4250;
@@ -115,13 +117,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         /* ПРАВА ЧАСТИНА (КАРТИНКА) */
         .right-panel {
+            /* Переконайтеся, що файл login-bg.jpg лежить у тій же папці */
             background-image: url('login-bg.jpg');
             background-size: cover;
             background-position: center;
             position: relative;
         }
 
-        /* Затемнення та контент на картинці */
         .right-panel::before {
             content: '';
             position: absolute;
@@ -148,13 +150,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             background: linear-gradient(90deg, #fff, #aebad4);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-        }
-
-        .big-logo-icon {
-            font-size: 5rem;
-            color: #0d6efd;
-            margin-bottom: 1.5rem;
-            filter: drop-shadow(0 0 15px rgba(13,110,253,0.5));
         }
 
         /* Анімація появи */
@@ -214,7 +209,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <div class="col-lg-8 col-md-7 d-none d-md-block right-panel">
             <div class="overlay-content">
                 <div style="max-width: 600px;" class="fade-in-up" style="animation-delay: 0.2s;">
-                    <i class="bi bi-shield-check big-logo-icon"></i>
+                    
+                    <img src="https://ui-avatars.com/api/?name=TL&background=0d6efd&color=fff&size=128&rounded=true" 
+                         alt="TransLogistic Logo" 
+                         loading="lazy" 
+                         class="mb-4 shadow-lg" 
+                         width="100" 
+                         height="100">
                     
                     <h1 class="big-logo-text">TransLogistic<br>CRM</h1>
                     
