@@ -3,7 +3,6 @@ session_start();
 require_once 'db.php';
 require_once 'functions.php';
 
-// --- ВИМОГА: HTTPS (Завдання 5.1) ---
 // Якщо сайт не на локальному сервері, змушуємо використовувати HTTPS
 if ($_SERVER['HTTP_HOST'] !== 'localhost' && $_SERVER['HTTP_HOST'] !== '127.0.0.1') {
     if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === "off") {
@@ -14,7 +13,7 @@ if ($_SERVER['HTTP_HOST'] !== 'localhost' && $_SERVER['HTTP_HOST'] !== '127.0.0.
     }
 }
 
-// Генерація CSRF токена (Завдання 5.1)
+// Генерація CSRF токена 
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
@@ -29,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $username = clean($_POST['username']);
         $password = $_POST['password'];
 
-        // Запит до БД (Завдання 4.3 - Prepared Statements)
+        // Запит до БД (Prepared Statements)
         $stmt = $conn->prepare("SELECT id, password FROM users WHERE username = ?");
         $stmt->bind_param("s", $username);
         $stmt->execute();
@@ -240,3 +239,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 </body>
 </html>
+
