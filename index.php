@@ -1,22 +1,17 @@
 <?php
 session_start();
-$last_modified = filemtime(__FILE__);
-$etag = md5_file(__FILE__);
 
-header("Last-Modified: ".gmdate("D, d M Y H:i:s", $last_modified)." GMT");
-header("Etag: $etag");
-header("Cache-Control: public, max-age=3600");
-
-// Перевірка, чи є у браузера свіжа версія кешу (повертаємо 304 Not Modified)
-if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $last_modified || 
-    @trim($_SERVER['HTTP_IF_NONE_MATCH']) == $etag) {
-    header("HTTP/1.1 304 Not Modified");
-    exit;
-}
+// --- КЕШУВАННЯ  ---
+// Для динамічної CRM-системи ми забороняємо браузеру кешувати HTML-код сторінки,
+// щоб дані в таблиці завжди були актуальними після будь-якої зміни.
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
 
 require_once 'db.php';
 require_once 'functions.php';
 
+// --- HTTPS ---
 // Якщо сайт не на локальному сервері, змушуємо використовувати HTTPS
 if ($_SERVER['HTTP_HOST'] !== 'localhost' && $_SERVER['HTTP_HOST'] !== '127.0.0.1') {
     if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === "off") {
@@ -30,7 +25,7 @@ if ($_SERVER['HTTP_HOST'] !== 'localhost' && $_SERVER['HTTP_HOST'] !== '127.0.0.
 // Перевірка авторизації
 if (!isset($_SESSION['user_id'])) { header("Location: login.php"); exit; }
 
-// Генерація CSRF токена 
+// Генерація CSRF токена (Завдання 5.1)
 if (empty($_SESSION['csrf_token'])) $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
 // --- ОТРИМАННЯ ДАНИХ ---
@@ -41,7 +36,7 @@ $chartData = $conn->query("SELECT service_type, COUNT(*) as c FROM orders GROUP 
 $labels = []; $counts = [];
 while ($r = $chartData->fetch_assoc()) { $labels[] = $r['service_type']; $counts[] = $r['c']; }
 
-// Пошук та фільтрація (захист від SQL Injection)
+// Пошук та фільтрація 
 $search = clean($_GET['search'] ?? '');
 $sql = "SELECT * FROM orders WHERE client_name LIKE ? OR phone LIKE ? ORDER BY created_at DESC";
 $stmt = $conn->prepare($sql);
@@ -292,6 +287,7 @@ $orders = $stmt->get_result();
                                                     <input type="hidden" name="action" value="status">
                                                     <input type="hidden" name="id" value="<?= $row['id'] ?>">
                                                     <input type="hidden" name="val" value="in_progress">
+                                                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                                                     <button type="submit" class="btn btn-icon btn-outline-warning border-0" title="В роботу">
                                                         <i class="bi bi-gear-fill fs-6"></i>
                                                     </button>
@@ -303,6 +299,7 @@ $orders = $stmt->get_result();
                                                     <input type="hidden" name="action" value="status">
                                                     <input type="hidden" name="id" value="<?= $row['id'] ?>">
                                                     <input type="hidden" name="val" value="completed">
+                                                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                                                     <button type="submit" class="btn btn-icon btn-outline-success border-0" title="Завершити">
                                                         <i class="bi bi-check-lg fs-5"></i>
                                                     </button>
@@ -336,4 +333,3 @@ $orders = $stmt->get_result();
 <script src="script.js"></script>
 </body>
 </html>
-
