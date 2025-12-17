@@ -209,12 +209,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <div class="overlay-content">
                 <div style="max-width: 600px;" class="fade-in-up" style="animation-delay: 0.2s;">
                     
-                    <img src="https://ui-avatars.com/api/?name=TL&background=0d6efd&color=fff&size=128&rounded=true" 
-                         alt="TransLogistic Logo" 
-                         loading="lazy" 
-                         class="mb-4 shadow-lg" 
-                         width="100" 
-                         height="100">
+                    <img src="Avatar.png"
+                        alt="TransLogistic Logo"
+                        loading="lazy"
+                        class="mb-4 shadow-lg rounded-circle"
+                        width="100"
+                        height="100"
+                        style="object-fit: cover;">
                     
                     <h1 class="big-logo-text">TransLogistic<br>CRM</h1>
                     
@@ -239,4 +240,5 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 </body>
 </html>
+
 
